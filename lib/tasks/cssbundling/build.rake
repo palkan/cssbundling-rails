@@ -14,7 +14,7 @@ namespace :css do
       raise "cssbundling-rails: Command build failed, ensure `#{command}` runs without errors"
     end
   end
-  build_task.prereqs << :install unless ENV["SKIP_YARN_INSTALL"] || ENV["SKIP_BUN_INSTALL"]
+  build_task.prereqs << :install unless ENV["SKIP_NPM_INSTALL"] || ENV["SKIP_YARN_INSTALL"] || ENV["SKIP_BUN_INSTALL"]
 end
 
 module Cssbundling
@@ -24,12 +24,14 @@ module Cssbundling
     def install_command
       return "bun install" if File.exist?('bun.lockb') || (tool_exists?('bun') && !File.exist?('yarn.lock'))
       return "yarn install" if File.exist?('yarn.lock') || tool_exists?('yarn')
+      return "npm install" if File.exist?('package-lock.json') || tool_exists?('npm')
       raise "cssbundling-rails: No suitable tool found for installing JavaScript dependencies"
     end
 
     def build_command
       return "bun run build:css" if File.exist?('bun.lockb') || (tool_exists?('bun') && !File.exist?('yarn.lock'))
       return "yarn build:css" if File.exist?('yarn.lock') || tool_exists?('yarn')
+      return "npm run build:css" if File.exist?('package-lock.json') || tool_exists?('npm')
       raise "cssbundling-rails: No suitable tool found for building CSS"
     end
 
