@@ -22,16 +22,16 @@ module Cssbundling
     extend self
 
     def install_command
+      return "npm install" if File.exist?('package-lock.json') && tool_exists?('npm')
       return "bun install" if File.exist?('bun.lockb') || (tool_exists?('bun') && !File.exist?('yarn.lock'))
       return "yarn install" if File.exist?('yarn.lock') || tool_exists?('yarn')
-      return "npm install" if File.exist?('package-lock.json') || tool_exists?('npm')
       raise "cssbundling-rails: No suitable tool found for installing JavaScript dependencies"
     end
 
     def build_command
+      return "npm run build:css" if File.exist?('package-lock.json') && tool_exists?('npm')
       return "bun run build:css" if File.exist?('bun.lockb') || (tool_exists?('bun') && !File.exist?('yarn.lock'))
       return "yarn build:css" if File.exist?('yarn.lock') || tool_exists?('yarn')
-      return "npm run build:css" if File.exist?('package-lock.json') || tool_exists?('npm')
       raise "cssbundling-rails: No suitable tool found for building CSS"
     end
 
